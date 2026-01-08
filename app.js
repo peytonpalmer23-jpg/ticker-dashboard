@@ -3,7 +3,7 @@ const CONFIG = {
   LOCATION: "Birmingham, US",
   LAT: 33.5186,
   LON: -86.8104,
-  WEATHER_API_KEY: "YOUR_OPENWEATHER_KEY",
+  WEATHER_API_KEY: "4af01e1ce83bbf0724a64a0eab2b9fd7",
   STOCKS: ["AAPL", "MSFT", "SPY"],
 };
 
