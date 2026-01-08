@@ -1,5 +1,14 @@
 /* ================= CONFIG ================= */
+CONFIG.LOCATION.NAME
+CONFIG.LOCATION.LAT
+CONFIG.LOCATION.LON
+CONFIG.WEATHER.API_KEY
 
+CONFIG.STOCKS.SYMBOLS
+CONFIG.STOCKS.API_KEY
+
+setInterval(loadWeather, CONFIG.REFRESH.WEATHER);
+setInterval(updateTicker, CONFIG.REFRESH.TICKER);
 
 const STOCK_API_KEY = "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g";
 
