@@ -1,17 +1,3 @@
-/* ---------------- CONFIG ---------------- */
-// Make sure CONFIG has LAT, LON for your weather
-// Example:
-// const CONFIG = {
-//   LOCATION: "Birmingham,AL",
-//   LAT: 33.5186,
-//   LON: -86.8104,
-//   WEATHER_API_KEY: "YOUR_OPENWEATHER_KEY",
-//   STOCKS: ["AAPL","MSFT","SPY"],
-//   SPORTS_API: { BASE: "https://ncaa-api.henrygd.me/openapi", FOOTBALL: "football/fbs", BASKETBALL: "basketball-men/d1" }
-// }
-
-const STOCK_API_KEY = "d5fjdr9r01qnjhocm5dgd5fjdr9r01qnjhocm5e0";
-
 /* ---------------- CLOCK ---------------- */
 function updateClock() {
   const now = new Date();
@@ -44,7 +30,7 @@ async function loadWeather() {
       <canvas id="weeklyChart" width="400" height="150"></canvas>
     `;
 
-    // Prepare 7-day forecast data
+    // 7-day forecast chart
     const labels = data.daily.map(d => {
       const date = new Date(d.dt * 1000);
       return date.toLocaleDateString([], { weekday: "short" });
@@ -71,8 +57,7 @@ async function loadWeather() {
     latestWeatherText = `${CONFIG.LOCATION} Weather N/A`;
   }
 }
-
-// Refresh weather every 60 seconds independently
+// Refresh weather every 60 seconds
 loadWeather();
 setInterval(loadWeather, 60000);
 
@@ -110,37 +95,49 @@ async function fetchNcaaSchedule(sportPath) {
   }
 }
 
-function formatNcaaGame(game) {
-  const home = game.home.names.short.toUpperCase();
-  const away = game.away.names.short.toUpperCase();
-  const status = game.status || "Scheduled";
-  const score = (game.home.score || 0) + "-" + (game.away.score || 0);
-  const gameTime = game.time || "";
-  return `${away} @ ${home} ${status} ${score} ${gameTime}`;
+function filterAuburnGames(games) {
+  return games.filter(
+    g =>
+      g.home.names.short.toUpperCase() === "AUBURN" ||
+      g.away.names.short.toUpperCase() === "AUBURN"
+  );
 }
 
-async function loadSportsPanel() {
+function formatAuburnGame(game) {
+  const home = game.home.names.short.toUpperCase();
+  const away = game.away.names.short.toUpperCase();
+  const homeScore = game.home.score || 0;
+  const awayScore = game.away.score || 0;
+  const status = game.status || "Scheduled";
+  const time = game.time || "";
+  return `${away} @ ${home} | ${awayScore}-${homeScore} | ${status} ${time}`;
+}
+
+async function loadAuburnSportsPanel() {
   const footballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.FOOTBALL);
   const basketballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASKETBALL);
 
-  let html = `<h2>Sports Updates</h2>`;
+  const auburnFootball = filterAuburnGames(footballGames);
+  const auburnBasketball = filterAuburnGames(basketballGames);
 
-  if (footballGames.length) {
+  let html = `<h2>Live Auburn Sports</h2>`;
+
+  if (auburnFootball.length) {
     html += `<div><strong>Football</strong>`;
-    footballGames.forEach(g => { html += `<div>${formatNcaaGame(g)}</div>`; });
+    auburnFootball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
     html += `</div>`;
-  }
+  } else html += `<div><strong>Football</strong><div>No games today</div></div>`;
 
-  if (basketballGames.length) {
+  if (auburnBasketball.length) {
     html += `<div><strong>Basketball</strong>`;
-    basketballGames.forEach(g => { html += `<div>${formatNcaaGame(g)}</div>`; });
+    auburnBasketball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
     html += `</div>`;
-  }
+  } else html += `<div><strong>Basketball</strong><div>No games today</div></div>`;
 
   document.getElementById("sports").innerHTML = html;
 
-  const nextFootball = footballGames[0] ? formatNcaaGame(footballGames[0]) : "No football today";
-  const nextBasketball = basketballGames[0] ? formatNcaaGame(basketballGames[0]) : "No basketball today";
+  const nextFootball = auburnFootball[0] ? formatAuburnGame(auburnFootball[0]) : "No football today";
+  const nextBasketball = auburnBasketball[0] ? formatAuburnGame(auburnBasketball[0]) : "No basketball today";
 
   return `${nextFootball} | ${nextBasketball}`;
 }
@@ -151,7 +148,7 @@ function animateTicker() {
   const containerWidth = ticker.parentElement.offsetWidth;
   const tickerWidth = ticker.offsetWidth;
   const distance = tickerWidth + containerWidth;
-  const speed = 100; // pixels/sec
+  const speed = 100;
   const duration = distance / speed;
 
   ticker.style.transition = `transform ${duration}s linear`;
@@ -178,9 +175,9 @@ function startTicker() {
 /* ---------------- LOAD & UPDATE TICKER ---------------- */
 async function updateTicker() {
   try {
-    const weatherText = latestWeatherText; // always latest
+    const weatherText = latestWeatherText;
     const stockText = await loadStocks();
-    const sportsText = await loadSportsPanel();
+    const sportsText = await loadAuburnSportsPanel();
 
     document.getElementById("ticker-content").textContent =
       `${weatherText}   |   ${stockText}   |   ${sportsText}`;
@@ -191,7 +188,6 @@ async function updateTicker() {
   }
 }
 
-// Initial ticker load and repeat every 2 minutes
+// Initial ticker load and refresh every 2 minutes
 updateTicker();
 setInterval(updateTicker, 120000);
-
