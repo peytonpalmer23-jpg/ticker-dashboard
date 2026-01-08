@@ -61,7 +61,7 @@ body {
   padding-left: 100%;
   font-size: 22px;
   line-height: 70px;
-  animation: scroll 20s linear infinite;
+  animation: scroll 49s linear infinite;
 }
 
 @keyframes scroll {
