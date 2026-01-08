@@ -1,7 +1,7 @@
 /* ---------------- CONFIG ---------------- */
 // Example configuration:
 const CONFIG = {
-  LOCATION: "Birmingham,US",
+  LOCATION: "Birmingham, US",
   LAT: 33.5186,
   LON: -86.8104,
   WEATHER_API_KEY: "4af01e1ce83bbf0724a64a0eab2b9fd7",
