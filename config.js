@@ -1,16 +1,16 @@
-/* ---------------- CONFIG ---------------- */
-// Example configuration:
-const CONFIG = {
-  LOCATION: "Birmingham, US",
+// config.js
+export const CONFIG = {
+  LOCATION: "Birmingham,AL",
   LAT: 33.5186,
   LON: -86.8104,
-  STOCKS: ["SPY","AAPL","NVDA","TSLA"],
+  WEATHER_API_KEY: "4af01e1ce83bbf0724a64a0eab2b9fd7",
+  STOCKS: ["AAPL","MSFT","SPY"],
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
     FOOTBALL: "football/fbs",
     BASKETBALL: "basketball-men/d1",
-    BASEBALL: "baseball/d1"
+    BASEBALL: "baseball-men/d1"
   }
 };
-const WEATHER_API_KEY = "4af01e1ce83bbf0724a64a0eab2b9fd7";
-const STOCK_API_KEY = "d5fjgcpr01qnjhocmjugd5fjgcpr01qnjhocmjv0";
+
+export const STOCK_API_KEY = "d5fk0u1r01qnjhocpkd0d5fk0u1r01qnjhocpkdg";
