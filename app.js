@@ -75,13 +75,12 @@ function loadSportsPanel() {
       </div>
     </div>
   `;
-  // Return text for ticker
   return "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM | Baseball Fri 6:00 PM";
 }
 
 /* ---------------- STOCKS ---------------- */
 
-const STOCK_API_KEY = "d5fip2pr01qnjhocifq0d5fip2pr01qnjhocifqg";
+const STOCK_API_KEY = "YOUR_FINNHUB_KEY";
 
 async function fetchStockData(symbol) {
   try {
@@ -106,10 +105,13 @@ async function loadStocks() {
 
 function animateTicker() {
   const ticker = document.getElementById("ticker-content");
-  const tickerWidth = ticker.offsetWidth;
   const containerWidth = ticker.parentElement.offsetWidth;
+  const tickerWidth = ticker.offsetWidth;
+
+  // total distance for ticker to travel
   const distance = tickerWidth + containerWidth;
-  const speed = 100; // pixels per second, adjust to preference
+
+  const speed = 100; // pixels per second
   const duration = distance / speed;
 
   ticker.style.transition = `transform ${duration}s linear`;
@@ -141,9 +143,10 @@ async function updateTicker() {
     const stockText = await loadStocks();
     const sportsText = loadSportsPanel();
 
-    document.getElementById("ticker-content").textContent =
-      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+    const tickerText = `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+    document.getElementById("ticker-content").textContent = tickerText;
 
+    // start dynamic scroll
     startTicker();
   } catch (error) {
     console.error("Ticker update failed:", error);
@@ -155,3 +158,4 @@ updateTicker();
 
 // Refresh every 2 minutes
 setInterval(updateTicker, 120000);
+
