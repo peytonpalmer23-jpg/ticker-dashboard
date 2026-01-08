@@ -100,8 +100,8 @@ function loadSports() {
 
 function loadTicker() {
  /* ------ REMOVE WEATHER  const weatherText = "Birmingham 72°F Clear"; -------- */
-  const stockText /* -- = "AAPL 189.3 ▲1.2% | MSFT 402.1 ▼0.4% | SPY 478.2 ▲0.6%"; --*/
-  const sportsText /* -- = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM"; --*/
+  const stockText = "AAPL 189.3 ▲1.2% | MSFT 402.1 ▼0.4% | SPY 478.2 ▲0.6%";
+  const sportsText = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM";
 
   document.getElementById("ticker-content").textContent =
     `${weatherText}   |   ${stockText}   |   ${sportsText}`;
