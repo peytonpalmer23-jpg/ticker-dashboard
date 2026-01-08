@@ -106,14 +106,14 @@ async function loadTicker() {
     // 2. Stocks
     const stockPromises = STOCK_SYMBOLS.map(fetchStockData);
     const stockResults = await Promise.all(stockPromises);
-    const stockText = stockResults.join(" | ");
+    const stockText = stockResults.join("     ");
 
     // 3. Sports (keep placeholders for now)
     const sportsText = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM";
 
     // 4. Update ticker content
     document.getElementById("ticker-content").textContent =
-      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+      `${weatherText}         ${stockText}         ${sportsText}`;
   } catch (error) {
     console.error("Ticker update failed:", error);
   }
