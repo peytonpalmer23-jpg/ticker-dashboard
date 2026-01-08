@@ -25,15 +25,17 @@ async function loadWeather() {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Display only the weather description (Clear, Rain, Clouds, etc.)
     document.getElementById("weather").innerHTML = `
       <h2>Weather</h2>
       <p>${CONFIG.LOCATION}</p>
       <p style="font-size:42px">${Math.round(data.main.temp)}°F</p>
       <p>${data.weather[0].main}</p>
     `;
+
+    return `${CONFIG.LOCATION} ${Math.round(data.main.temp)}°F ${data.weather[0].main}`;
   } catch {
     document.getElementById("weather").textContent = "Weather unavailable";
+    return `${CONFIG.LOCATION} Weather N/A`;
   }
 }
 
@@ -41,7 +43,6 @@ async function loadWeather() {
 
 function formatGameDate(dateString, timeString) {
   const date = new Date(`${dateString} ${timeString}`);
-
   return date.toLocaleDateString([], {
     weekday: "short",
     month: "long",
@@ -49,7 +50,7 @@ function formatGameDate(dateString, timeString) {
   }) + " at " + timeString;
 }
 
-function loadSports() {
+function loadSportsPanel() {
   document.getElementById("sports").innerHTML = `
     <h2>Sports Updates</h2>
 
@@ -74,19 +75,19 @@ function loadSports() {
       </div>
     </div>
   `;
+  // Return text for ticker
+  return "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM | Baseball Fri 6:00 PM";
 }
 
-/* ---------------- LIVE TICKER ---------------- */
+/* ---------------- STOCKS ---------------- */
 
 const STOCK_API_KEY = "d5fip2pr01qnjhocifq0d5fip2pr01qnjhocifqg";
-const STOCK_SYMBOLS = CONFIG.STOCKS; // Example: ["SPY","AAPL","GOOG"]
 
 async function fetchStockData(symbol) {
   try {
     const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${STOCK_API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
-    // data.c = current price, data.dp = change percent
     const arrow = data.dp >= 0 ? "▲" : "▼";
     const changePercent = Math.abs(data.dp).toFixed(2);
     return `${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%`;
@@ -95,44 +96,62 @@ async function fetchStockData(symbol) {
   }
 }
 
-async function loadTicker() {
+async function loadStocks() {
+  const promises = CONFIG.STOCKS.map(fetchStockData);
+  const results = await Promise.all(promises);
+  return results.join(" | ");
+}
+
+/* ---------------- DYNAMIC TICKER ---------------- */
+
+function animateTicker() {
+  const ticker = document.getElementById("ticker-content");
+  const tickerWidth = ticker.offsetWidth;
+  const containerWidth = ticker.parentElement.offsetWidth;
+  const distance = tickerWidth + containerWidth;
+  const speed = 100; // pixels per second, adjust to preference
+  const duration = distance / speed;
+
+  ticker.style.transition = `transform ${duration}s linear`;
+  ticker.style.transform = `translateX(-${tickerWidth}px)`;
+
+  ticker.addEventListener(
+    "transitionend",
+    () => {
+      ticker.style.transition = "none";
+      ticker.style.transform = `translateX(${containerWidth}px)`;
+      requestAnimationFrame(() => requestAnimationFrame(animateTicker));
+    },
+    { once: true }
+  );
+}
+
+function startTicker() {
+  const ticker = document.getElementById("ticker-content");
+  ticker.style.transition = "none";
+  ticker.style.transform = `translateX(${ticker.parentElement.offsetWidth}px)`;
+  requestAnimationFrame(() => requestAnimationFrame(animateTicker));
+}
+
+/* ---------------- LOAD & UPDATE TICKER ---------------- */
+
+async function updateTicker() {
   try {
-    // 1. Weather
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.LOCATION}&units=imperial&appid=${CONFIG.WEATHER_API_KEY}`;
-    const weatherRes = await fetch(weatherUrl);
-    const weatherData = await weatherRes.json();
-    const weatherText = `${CONFIG.LOCATION} ${Math.round(weatherData.main.temp)}°F ${weatherData.weather[0].main}`;
+    const weatherText = await loadWeather();
+    const stockText = await loadStocks();
+    const sportsText = loadSportsPanel();
 
-    // 2. Stocks
-    const stockPromises = STOCK_SYMBOLS.map(fetchStockData);
-    const stockResults = await Promise.all(stockPromises);
-    const stockText = stockResults.join(" | ");
-
-    // 3. Sports (keep placeholders for now)
-    const sportsText = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM";
-
-    // 4. Update ticker content
     document.getElementById("ticker-content").textContent =
-      `${weatherText}  |  ${stockText}  |  ${sportsText}`;
+      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+
+    startTicker();
   } catch (error) {
     console.error("Ticker update failed:", error);
   }
 }
 
 // Initial load
-loadTicker();
+updateTicker();
 
-// Refresh every 1 minute
-setInterval(loadTicker, 60000);
-
-/* ---------------- INIT ---------------- */
-
-loadWeather();
-loadSports();
-loadTicker();
-
-// Refresh weather and ticker every 2 minutes
-setInterval(() => {
-  loadWeather();
-  loadTicker();
-}, 120000);
+// Refresh every 2 minutes
+setInterval(updateTicker, 120000);
