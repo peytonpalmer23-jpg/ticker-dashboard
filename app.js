@@ -4,7 +4,7 @@ const CONFIG = {
   LAT: 33.5186,
   LON: -86.8104,
   WEATHER_API_KEY: "4af01e1ce83bbf0724a64a0eab2b9fd7",
-  STOCKS: ["AAPL", "MSFT", "SPY"],
+  STOCKS: ["SPY", "DJI", "AAPL", "TSLA", "NVDA"],
 };
 
 const STOCK_API_KEY = "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g";
