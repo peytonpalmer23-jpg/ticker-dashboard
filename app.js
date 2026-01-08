@@ -71,7 +71,7 @@ async function loadWeather() {
   }
 }
 loadWeather();
-setInterval(loadWeather, 60000);
+setInterval(loadWeather, 120000);
 
 /* ---------------- STOCKS ---------------- */
 async function fetchStockData(symbol) {
