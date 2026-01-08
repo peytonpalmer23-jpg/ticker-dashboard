@@ -92,8 +92,8 @@ header {
 
 #ticker-content {
   position: absolute;
+  left: 0;
   white-space: nowrap;
-  padding-left: 100%;
-  font-size: 14px;
   line-height: 40px;
+  will-change: transform;
 }
