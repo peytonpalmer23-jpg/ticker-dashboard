@@ -1,3 +1,6 @@
+import { CONFIG, STOCK_API_KEY } from './config.js';
+
+
 /* ---------------- CLOCK ---------------- */
 function updateClock() {
   const now = new Date();
@@ -18,10 +21,12 @@ async function loadWeather() {
     const res = await fetch(url);
     const data = await res.json();
 
+    if (!data.current || !data.daily) throw new Error("Invalid weather data");
+
     const current = data.current;
     latestWeatherText = `${CONFIG.LOCATION} ${Math.round(current.temp)}°F ${current.weather[0].main}`;
 
-    // Render panel
+    // Render weather panel
     document.getElementById("weather").innerHTML = `
       <h2>Weather</h2>
       <p>${CONFIG.LOCATION}</p>
@@ -50,16 +55,14 @@ async function loadWeather() {
       },
       options: { responsive: true, plugins: { legend: { position: "bottom" } } }
     });
-
   } catch (err) {
-    console.error("Weather API failed", err);
+    console.error("Weather API failed:", err);
     document.getElementById("weather").textContent = "Weather unavailable";
     latestWeatherText = `${CONFIG.LOCATION} Weather N/A`;
   }
 }
-// Refresh weather every 60 seconds
 loadWeather();
-setInterval(loadWeather, 60000);
+setInterval(loadWeather, 60000); // refresh every 60s
 
 /* ---------------- STOCKS ---------------- */
 async function fetchStockData(symbol) {
@@ -70,8 +73,7 @@ async function fetchStockData(symbol) {
     const up = data.dp >= 0;
     const arrow = up ? "▲" : "▼";
     const changePercent = Math.abs(data.dp).toFixed(2);
-    const priceText = `${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%`;
-    return `<span class="${up ? "stock-up" : "stock-down"}">${priceText}</span>`;
+    return `<span class="${up ? "stock-up" : "stock-down"}">${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%</span>`;
   } catch {
     return `${symbol} N/A`;
   }
@@ -146,11 +148,12 @@ async function loadAuburnSportsPanel() {
 
   document.getElementById("sports").innerHTML = html;
 
+  // Prepare ticker text
   const nextFootball = auburnFootball[0] ? formatAuburnGame(auburnFootball[0]) : "No football today";
   const nextBasketball = auburnBasketball[0] ? formatAuburnGame(auburnBasketball[0]) : "No basketball today";
   const nextBaseball = auburnBaseball[0] ? formatAuburnGame(auburnBaseball[0]) : "No baseball today";
 
-  return `${nextFootball} | ${nextBasketball}| ${nextBaseball}`;
+  return `${nextFootball} | ${nextBasketball} | ${nextBaseball}`;
 }
 
 /* ---------------- DYNAMIC TICKER ---------------- */
@@ -159,7 +162,7 @@ function animateTicker() {
   const containerWidth = ticker.parentElement.offsetWidth;
   const tickerWidth = ticker.offsetWidth;
   const distance = tickerWidth + containerWidth;
-  const speed = 100;
+  const speed = 100; // pixels/sec
   const duration = distance / speed;
 
   ticker.style.transition = `transform ${duration}s linear`;
@@ -191,14 +194,14 @@ async function updateTicker() {
     const sportsText = await loadAuburnSportsPanel();
 
     document.getElementById("ticker-content").innerHTML =
-  `${latestWeatherText}   |   ${stockText}   |   ${sportsText}`;
+      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
 
     startTicker();
   } catch (err) {
-    console.error("Ticker update failed", err);
+    console.error("Ticker update failed:", err);
   }
 }
 
-// Initial ticker load and refresh every 2 minutes
+// Initial load and repeat every 2 minutes
 updateTicker();
 setInterval(updateTicker, 120000);
