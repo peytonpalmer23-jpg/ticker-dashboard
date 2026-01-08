@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Live Background Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>Live Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for weather graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<div class="dashboard">
+  <!-- Clock -->
+  <div id="clock-panel">
+    <div id="time"></div>
+    <div id="date"></div>
+  </div>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="time" id="time"></div>
-    <div class="date" id="date"></div>
-  </header>
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+    <div id="weather" class="panel"></div>
+    <div id="stocks" class="panel"></div>
+    <div id="sports" class="panel"></div>
+  </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="content">
-    <div class="panel" id="weather"></div>
-    <div class="panel" id="sports"></div>
-  </main>
-
-  <!-- TICKER -->
-  <footer class="ticker">
+  <!-- Ticker -->
+  <div class="ticker">
     <div id="ticker-content"></div>
-  </footer>
+  </div>
 
-</div>
-
-<script src="config.js"></script>
-<script src="app.js"></script>
+  <!-- Main JS -->
+  <script src="app.js"></script>
 </body>
 </html>
