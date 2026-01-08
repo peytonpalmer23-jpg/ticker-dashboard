@@ -78,7 +78,7 @@ function loadSports() {
 
 /* ---------------- LIVE TICKER ---------------- */
 
-const STOCK_API_KEY = "YOUR_FINNHUB_KEY";
+const STOCK_API_KEY = "d5fip2pr01qnjhocifq0d5fip2pr01qnjhocifqg";
 const STOCK_SYMBOLS = CONFIG.STOCKS; // Example: ["AAPL","MSFT","SPY"]
 
 async function fetchStockData(symbol) {
