@@ -72,4 +72,35 @@ body {
   top: 0;
 }
 
+/* ---------------- WEATHER PANEL ---------------- */
+#weather {
+  padding: 20px;
+}
+
+/* ---------------- SPORTS PANEL ---------------- */
+#sports {
+  padding: 20px;
+}
+
+/* ---------------- TICKER ---------------- */
+.ticker {
+  overflow: hidden;
+  border-top: 1px solid #1c1c1c;
+  background: #000;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 22px;
+  line-height: 70px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(100%);
+}
 
