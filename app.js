@@ -80,24 +80,30 @@ function loadSports() {
 }
 
 /* ================= TICKER ================= */
-function startTicker() {
+function resetTickerPosition() {
   const ticker = document.getElementById("ticker-content");
   const container = ticker.parentElement;
 
   ticker.style.transition = "none";
   ticker.style.transform = `translateX(${container.offsetWidth}px)`;
+}
 
-  requestAnimationFrame(() => {
-    const distance = ticker.offsetWidth + container.offsetWidth;
-    const duration = distance / 100;
+function startTickerAnimation() {
+  const ticker = document.getElementById("ticker-content");
+  const container = ticker.parentElement;
 
-    ticker.style.transition = `transform ${duration}s linear`;
-    ticker.style.transform = `translateX(-${ticker.offsetWidth}px)`;
-  });
+  const distance = ticker.offsetWidth + container.offsetWidth;
+  const duration = distance / 80; // slower, readable
+
+  ticker.style.transition = `transform ${duration}s linear`;
+  ticker.style.transform = `translateX(-${ticker.offsetWidth}px)`;
 
   ticker.addEventListener(
     "transitionend",
-    () => startTicker(),
+    () => {
+      resetTickerPosition();
+      requestAnimationFrame(startTickerAnimation);
+    },
     { once: true }
   );
 }
@@ -107,11 +113,20 @@ async function updateTicker() {
   const stockText = await loadStocks();
   const sportsText = loadSports();
 
-  document.getElementById("ticker-content").innerHTML =
+  const ticker = document.getElementById("ticker-content");
+
+  // 1️⃣ Inject content
+  ticker.innerHTML =
     `${latestWeatherText} | ${stockText} | ${sportsText}`;
 
-  startTicker();
+  // 2️⃣ Force layout calculation
+  ticker.offsetWidth;
+
+  // 3️⃣ Reset + animate on next frame
+  resetTickerPosition();
+  requestAnimationFrame(startTickerAnimation);
 }
 
+/* ================= INIT ================= */
 updateTicker();
 setInterval(updateTicker, 120000);
