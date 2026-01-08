@@ -4,5 +4,13 @@ const CONFIG = {
   STOCKS: ["SPY", "AAPL", "GOOG", "TSLA"],
   SPORTS: {
     TEAM: "Auburn Tigers"
+    
   }
+};
+
+CONFIG.SPORTS_API = {
+  BASE: "https://ncaa-api.henrygd.me/openapi",
+  // sport codes: football = football/fbs, basketball = basketball-men/d1
+  FOOTBALL: "football/fbs",
+  BASKETBALL: "basketball-men/d1"
 };
