@@ -1,10 +1,10 @@
 /* ---------------- CONFIG ---------------- */
 const CONFIG = {
-  LOCATION: "Birmingham,AL",
+  LOCATION: "Birmingham,US",
   LAT: 33.5186,
   LON: -86.8104,
   WEATHER_API_KEY: "ec17977d965fdd9d0ef4cc0d2963af17",
-  STOCKS: ["AAPL","MSFT","SPY"],
+  STOCKS: ["AAPL","SPY","NVDA", "TSLA"],
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
     FOOTBALL: "football/fbs",
