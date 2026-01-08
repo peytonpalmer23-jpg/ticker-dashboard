@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Live Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js for weather graph -->
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -17,14 +17,34 @@
 
   <!-- Dashboard Grid -->
   <div class="dashboard-grid">
-    <div id="weather" class="panel"></div>
-    <div id="stocks" class="panel"></div>
-    <div id="sports" class="panel"></div>
+    
+    <!-- Weather Panel -->
+    <div id="weather" class="panel">
+      <h2>Weather</h2>
+      <p id="weather-location">Loading...</p>
+      <p id="weather-temp" style="font-size:42px"></p>
+      <p id="weather-condition"></p>
+      <!-- Persistent canvas for weekly forecast -->
+      <canvas id="weeklyChart" width="400" height="150"></canvas>
+    </div>
+
+    <!-- Stocks Panel -->
+    <div id="stocks" class="panel">
+      <h2>Stocks</h2>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Sports Panel -->
+    <div id="sports" class="panel">
+      <h2>Live Auburn Sports</h2>
+      <p>Loading...</p>
+    </div>
+
   </div>
 
   <!-- Ticker -->
   <div class="ticker">
-    <div id="ticker-content"></div>
+    <div id="ticker-content">Loading live ticker...</div>
   </div>
 
   <!-- Main JS -->
