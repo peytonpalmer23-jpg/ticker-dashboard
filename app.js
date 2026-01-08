@@ -79,7 +79,7 @@ function loadSports() {
 /* ---------------- LIVE TICKER ---------------- */
 
 const STOCK_API_KEY = "d5fip2pr01qnjhocifq0d5fip2pr01qnjhocifqg";
-const STOCK_SYMBOLS = CONFIG.STOCKS; // Example: ["AAPL","MSFT","SPY"]
+const STOCK_SYMBOLS = CONFIG.STOCKS; // Example: ["SPY","AAPL","GOOG"]
 
 async function fetchStockData(symbol) {
   try {
