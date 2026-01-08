@@ -4,7 +4,7 @@ const CONFIG = {
   LAT: 33.5186,
   LON: -86.8104,
   WEATHER_API_KEY: "ec17977d965fdd9d0ef4cc0d2963af17",
-  STOCKS: ["SPY","AAPL","NVDA", "TSLA"],
+  STOCKS: ["KO","DAL","SPY"],
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
     FOOTBALL: "football/fbs",
@@ -13,12 +13,6 @@ const CONFIG = {
   }
 };
 const STOCK_API_KEY = "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g";
-
-/* ---------------- PLACEHOLDER PANELS ---------------- */
-document.getElementById("weather").innerHTML = "<h2>Weather</h2><p>Loading...</p>";
-document.getElementById("stocks").innerHTML = "<h2>Stocks</h2><p>Loading...</p>";
-document.getElementById("sports").innerHTML = "<h2>Live Auburn Sports</h2><p>Loading...</p>";
-document.getElementById("ticker-content").textContent = "Loading live ticker...";
 
 /* ---------------- CLOCK ---------------- */
 function updateClock() {
@@ -33,24 +27,23 @@ updateClock();
 
 /* ---------------- WEATHER ---------------- */
 let latestWeatherText = "Loading weather...";
+let weatherChart; // persistent Chart.js object
+
 async function loadWeather() {
   try {
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${CONFIG.LAT}&lon=${CONFIG.LON}&exclude=minutely,hourly,alerts&units=imperial&appid=${CONFIG.WEATHER_API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
     const current = data.current;
+
     latestWeatherText = `${CONFIG.LOCATION} ${Math.round(current.temp)}°F ${current.weather[0].main}`;
 
-    // Render weather panel without waiting for other APIs
-    document.getElementById("weather").innerHTML = `
-      <h2>Weather</h2>
-      <p>${CONFIG.LOCATION}</p>
-      <p style="font-size:42px">${Math.round(current.temp)}°F</p>
-      <p>${current.weather[0].main}</p>
-      <canvas id="weeklyChart" width="400" height="150"></canvas>
-    `;
+    // Update text elements directly
+    document.getElementById("weather-location").textContent = CONFIG.LOCATION;
+    document.getElementById("weather-temp").textContent = `${Math.round(current.temp)}°F`;
+    document.getElementById("weather-condition").textContent = current.weather[0].main;
 
-    // 7-day forecast chart
+    // Prepare 7-day forecast data
     const labels = data.daily.map(d => {
       const date = new Date(d.dt * 1000);
       return date.toLocaleDateString([], { weekday: "short" });
@@ -59,25 +52,38 @@ async function loadWeather() {
     const tempsMin = data.daily.map(d => d.temp.min);
 
     const ctx = document.getElementById("weeklyChart").getContext("2d");
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels,
-        datasets: [
-          { label: "Max Temp °F", data: tempsMax, borderColor: "rgb(255,99,132)", fill: false },
-          { label: "Min Temp °F", data: tempsMin, borderColor: "rgb(54,162,235)", fill: false }
-        ]
-      },
-      options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-    });
+
+    if (weatherChart) {
+      // Update existing chart
+      weatherChart.data.labels = labels;
+      weatherChart.data.datasets[0].data = tempsMax;
+      weatherChart.data.datasets[1].data = tempsMin;
+      weatherChart.update();
+    } else {
+      // Create chart for the first time
+      weatherChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            { label: "Max Temp °F", data: tempsMax, borderColor: "rgb(255,99,132)", fill: false },
+            { label: "Min Temp °F", data: tempsMin, borderColor: "rgb(54,162,235)", fill: false }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+      });
+    }
+
   } catch (err) {
     console.error("Weather API failed:", err);
-    document.getElementById("weather").innerHTML = "<h2>Weather</h2><p>Unavailable</p>";
+    document.getElementById("weather-location").textContent = CONFIG.LOCATION;
+    document.getElementById("weather-temp").textContent = "N/A";
+    document.getElementById("weather-condition").textContent = "Weather Unavailable";
     latestWeatherText = `${CONFIG.LOCATION} Weather N/A`;
   }
 }
 loadWeather();
-setInterval(loadWeather, 60000);
+setInterval(loadWeather, 60000); // refresh every 60 seconds
 
 /* ---------------- STOCKS ---------------- */
 async function fetchStockData(symbol) {
