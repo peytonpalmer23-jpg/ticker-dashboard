@@ -1,41 +1,96 @@
+/* ---------------- GENERAL ---------------- */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #000;
-  color: #fff;
+  background-color: #000;  /* Black background */
+  color: #fff;             /* Default text white */
   overflow-x: hidden;
 }
 
-h2 { margin: 0 0 10px 0; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 5px;
+  font-weight: 500;
+}
 
-#clock-panel { text-align: center; padding: 20px; }
-#time { font-size: 48px; font-weight: bold; }
-#date { font-size: 22px; color: #ccc; }
+/* ---------------- CLOCK ---------------- */
+#clock-panel {
+  text-align: center;
+  padding: 20px;
+}
 
+#time {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+#date {
+  font-size: 22px;
+  color: #ccc;
+}
+
+/* ---------------- DASHBOARD GRID ---------------- */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr; /* Three equal columns */
   gap: 20px;
   padding: 20px;
 }
 
 .panel {
-  background-color: #111;
+  background-color: #111; /* Slightly lighter than black */
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
   min-height: 300px;
-  overflow: auto;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
 }
 
-#weather p { margin: 5px 0; }
-#stocks { padding: 10px 0; font-size: 20px; white-space: nowrap; }
-.stock-up { color: #4caf50; font-weight: bold; }
-.stock-down { color: #f44336; font-weight: bold; }
-#sports div { padding: 3px 0; font-size: 18px; }
-#sports strong { color: #fff; display: block; margin-top: 10px; font-size: 20px; }
+.panel:hover {
+  transform: translateY(-5px);
+}
 
+/* ---------------- WEATHER ---------------- */
+#weather p {
+  margin: 5px 0;
+}
+
+/* ---------------- STOCKS ---------------- */
+.stock-up {
+  color: #4caf50; /* Green for up */
+  font-weight: bold;
+}
+
+.stock-down {
+  color: #f44336; /* Red for down */
+  font-weight: bold;
+}
+
+#stocks {
+  padding: 10px 0;
+  font-size: 20px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ---------------- SPORTS ---------------- */
+#sports div {
+  padding: 3px 0;
+  font-size: 18px;
+}
+
+#sports strong {
+  color: #fff;
+  display: block;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+/* ---------------- TICKER ---------------- */
 .ticker {
   overflow: hidden;
   border-top: 1px solid #333;
@@ -46,7 +101,9 @@ h2 { margin: 0 0 10px 0; font-size: 24px; border-bottom: 1px solid #444; padding
   position: relative;
   font-size: 22px;
   font-weight: 500;
+  padding-left: 10px;
 }
+
 #ticker-content {
   display: inline-block;
   white-space: nowrap;
@@ -54,14 +111,44 @@ h2 { margin: 0 0 10px 0; font-size: 24px; border-bottom: 1px solid #444; padding
   left: 0;
   top: 0;
   transform: translateX(100%);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-#weeklyChart { margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; }
+/* ---------------- WEATHER CHART ---------------- */
+#weeklyChart {
+  margin-top: 15px;
+  border-top: 1px solid #444;
+  padding-top: 10px;
+}
 
-@media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 768px) { 
-  .dashboard-grid { grid-template-columns: 1fr; } 
-  #time { font-size: 36px; } 
-  #date { font-size: 18px; } 
-  #ticker-content { font-size: 18px; } 
+/* ---------------- SCROLLBAR STYLING ---------------- */
+.panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  #time {
+    font-size: 36px;
+  }
+  #date {
+    font-size: 18px;
+  }
+  #ticker-content {
+    font-size: 18px;
+  }
 }
