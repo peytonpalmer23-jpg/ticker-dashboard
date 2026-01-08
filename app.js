@@ -3,7 +3,7 @@ const CONFIG = {
   LOCATION: "Birmingham,AL",
   LAT: 33.5186,
   LON: -86.8104,
-  WEATHER_API_KEY: "4af01e1ce83bbf0724a64a0eab2b9fd7",
+  WEATHER_API_KEY: "ec17977d965fdd9d0ef4cc0d2963af17",
   STOCKS: ["AAPL","MSFT","SPY"],
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
@@ -12,8 +12,7 @@ const CONFIG = {
     BASEBALL: "baseball-men/d1"
   }
 };
-
-const STOCK_API_KEY = "d5fk0u1r01qnjhocpkd0d5fk0u1r01qnjhocpkdg";
+const STOCK_API_KEY = "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g";
 
 /* ---------------- CLOCK ---------------- */
 function updateClock() {
@@ -28,19 +27,14 @@ updateClock();
 
 /* ---------------- WEATHER ---------------- */
 let latestWeatherText = "Loading weather...";
-
 async function loadWeather() {
   try {
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${CONFIG.LAT}&lon=${CONFIG.LON}&exclude=minutely,hourly,alerts&units=imperial&appid=${CONFIG.WEATHER_API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
-
-    if (!data.current || !data.daily) throw new Error("Invalid weather data");
-
     const current = data.current;
     latestWeatherText = `${CONFIG.LOCATION} ${Math.round(current.temp)}°F ${current.weather[0].main}`;
 
-    // Render weather panel
     document.getElementById("weather").innerHTML = `
       <h2>Weather</h2>
       <p>${CONFIG.LOCATION}</p>
@@ -49,7 +43,7 @@ async function loadWeather() {
       <canvas id="weeklyChart" width="400" height="150"></canvas>
     `;
 
-    // 7-day forecast chart
+    // 7-day forecast
     const labels = data.daily.map(d => {
       const date = new Date(d.dt * 1000);
       return date.toLocaleDateString([], { weekday: "short" });
@@ -69,6 +63,7 @@ async function loadWeather() {
       },
       options: { responsive: true, plugins: { legend: { position: "bottom" } } }
     });
+
   } catch (err) {
     console.error("Weather API failed:", err);
     document.getElementById("weather").textContent = "Weather unavailable";
@@ -76,7 +71,7 @@ async function loadWeather() {
   }
 }
 loadWeather();
-setInterval(loadWeather, 60000); // refresh every 60s
+setInterval(loadWeather, 60000);
 
 /* ---------------- STOCKS ---------------- */
 async function fetchStockData(symbol) {
@@ -88,14 +83,10 @@ async function fetchStockData(symbol) {
     const arrow = up ? "▲" : "▼";
     const changePercent = Math.abs(data.dp).toFixed(2);
     return `<span class="${up ? "stock-up" : "stock-down"}">${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%</span>`;
-  } catch {
-    return `${symbol} N/A`;
-  }
+  } catch { return `${symbol} N/A`; }
 }
-
 async function loadStocks() {
-  const promises = CONFIG.STOCKS.map(fetchStockData);
-  const results = await Promise.all(promises);
+  const results = await Promise.all(CONFIG.STOCKS.map(fetchStockData));
   return results.join(" | ");
 }
 
@@ -103,21 +94,15 @@ async function loadStocks() {
 async function fetchNcaaSchedule(sportPath) {
   try {
     const year = new Date().getFullYear();
-    const url = `${CONFIG.SPORTS_API.BASE}/scoreboard/${sportPath}/${year}/all-conf`;
-    const res = await fetch(url);
+    const res = await fetch(`${CONFIG.SPORTS_API.BASE}/scoreboard/${sportPath}/${year}/all-conf`);
     const data = await res.json();
     return data.games || [];
-  } catch (err) {
-    console.error("Sports API failed", err);
-    return [];
-  }
+  } catch { return []; }
 }
 
 function filterAuburnGames(games) {
   return games.filter(
-    g =>
-      g.home.names.short.toUpperCase() === "AUBURN" ||
-      g.away.names.short.toUpperCase() === "AUBURN"
+    g => g.home.names.short.toUpperCase() === "AUBURN" || g.away.names.short.toUpperCase() === "AUBURN"
   );
 }
 
@@ -132,40 +117,20 @@ function formatAuburnGame(game) {
 }
 
 async function loadAuburnSportsPanel() {
-  const footballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.FOOTBALL);
-  const basketballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASKETBALL);
-  const baseballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASEBALL);
-
-  const auburnFootball = filterAuburnGames(footballGames);
-  const auburnBasketball = filterAuburnGames(basketballGames);
-  const auburnBaseball = filterAuburnGames(baseballGames);
+  const football = filterAuburnGames(await fetchNcaaSchedule(CONFIG.SPORTS_API.FOOTBALL));
+  const basketball = filterAuburnGames(await fetchNcaaSchedule(CONFIG.SPORTS_API.BASKETBALL));
+  const baseball = filterAuburnGames(await fetchNcaaSchedule(CONFIG.SPORTS_API.BASEBALL));
 
   let html = `<h2>Live Auburn Sports</h2>`;
-
-  if (auburnFootball.length) {
-    html += `<div><strong>Football</strong>`;
-    auburnFootball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
-    html += `</div>`;
-  } else html += `<div><strong>Football</strong><div>No games today</div></div>`;
-
-  if (auburnBasketball.length) {
-    html += `<div><strong>Basketball</strong>`;
-    auburnBasketball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
-    html += `</div>`;
-  } else html += `<div><strong>Basketball</strong><div>No games today</div></div>`;
-
-  if (auburnBaseball.length) {
-    html += `<div><strong>Baseball</strong>`;
-    auburnBaseball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
-    html += `</div>`;
-  } else html += `<div><strong>Baseball</strong><div>No games today</div></div>`;
+  html += football.length ? `<div><strong>Football</strong>` + football.map(formatAuburnGame).join("<br>") + "</div>" : `<div><strong>Football</strong><div>No games today</div></div>`;
+  html += basketball.length ? `<div><strong>Basketball</strong>` + basketball.map(formatAuburnGame).join("<br>") + "</div>" : `<div><strong>Basketball</strong><div>No games today</div></div>`;
+  html += baseball.length ? `<div><strong>Baseball</strong>` + baseball.map(formatAuburnGame).join("<br>") + "</div>" : `<div><strong>Baseball</strong><div>No games today</div></div>`;
 
   document.getElementById("sports").innerHTML = html;
 
-  // Prepare ticker text
-  const nextFootball = auburnFootball[0] ? formatAuburnGame(auburnFootball[0]) : "No football today";
-  const nextBasketball = auburnBasketball[0] ? formatAuburnGame(auburnBasketball[0]) : "No basketball today";
-  const nextBaseball = auburnBaseball[0] ? formatAuburnGame(auburnBaseball[0]) : "No baseball today";
+  const nextFootball = football[0] ? formatAuburnGame(football[0]) : "No football today";
+  const nextBasketball = basketball[0] ? formatAuburnGame(basketball[0]) : "No basketball today";
+  const nextBaseball = baseball[0] ? formatAuburnGame(baseball[0]) : "No baseball today";
 
   return `${nextFootball} | ${nextBasketball} | ${nextBaseball}`;
 }
@@ -176,7 +141,7 @@ function animateTicker() {
   const containerWidth = ticker.parentElement.offsetWidth;
   const tickerWidth = ticker.offsetWidth;
   const distance = tickerWidth + containerWidth;
-  const speed = 100; // pixels/sec
+  const speed = 100; // px/sec
   const duration = distance / speed;
 
   ticker.style.transition = `transform ${duration}s linear`;
@@ -200,7 +165,7 @@ function startTicker() {
   requestAnimationFrame(() => requestAnimationFrame(animateTicker));
 }
 
-/* ---------------- LOAD & UPDATE TICKER ---------------- */
+/* ---------------- UPDATE TICKER ---------------- */
 async function updateTicker() {
   try {
     const weatherText = latestWeatherText;
@@ -216,6 +181,5 @@ async function updateTicker() {
   }
 }
 
-// Initial load and repeat every 2 minutes
 updateTicker();
 setInterval(updateTicker, 120000);
