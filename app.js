@@ -179,7 +179,8 @@ async function updateTicker() {
   try {
     const weatherText = await loadWeather();
     const stockText = await loadStocks();
-    const sportsText = loadSportsPanel();
+    const sportsText = await loadSportsPanel();
+
 
     const tickerText = `${weatherText}   |   ${stockText}   |   ${sportsText}`;
     document.getElementById("ticker-content").textContent = tickerText;
