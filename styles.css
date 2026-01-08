@@ -57,18 +57,13 @@ body {
 }
 
 #ticker-content {
+  display: inline-block;
   white-space: nowrap;
-  padding-left: 100%;
   font-size: 22px;
   line-height: 70px;
-  animation: scroll 10s linear infinite;
+  /* Start fully off-screen right */
+  transform: translateX(100%);
+  /* Animation will be applied dynamically in JS */
 }
 
-@keyframes scroll {
-  from {
-    transform: translateX(0%);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
+
