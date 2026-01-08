@@ -19,7 +19,7 @@ updateClock();
 
 /* ---------------- WEATHER ---------------- */
 
-/* - function getWeatherIcon(condition) {
+function getWeatherIcon(condition) {
   const map = {
     Clear: "☀️",
     Clouds: "☁️",
@@ -33,7 +33,7 @@ updateClock();
   };
 
   return map[condition] || "🌡️";
-} -- */
+}
 
 async function loadWeather() {
   try {
@@ -42,7 +42,7 @@ async function loadWeather() {
     const data = await res.json();
 
     const condition = data.weather[0].main;
-    /* -- const icon = getWeatherIcon(condition); -- */
+    const icon = getWeatherIcon(condition);
 
     document.getElementById("weather").innerHTML = `
       <h2>Weather</h2>
