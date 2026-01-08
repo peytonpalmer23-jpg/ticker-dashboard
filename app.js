@@ -76,17 +76,54 @@ function loadSports() {
   `;
 }
 
-/* ---------------- STOCK TICKER ---------------- */
+/* ---------------- LIVE TICKER ---------------- */
+
+const STOCK_API_KEY = "YOUR_FINNHUB_KEY";
+const STOCK_SYMBOLS = CONFIG.STOCKS; // Example: ["AAPL","MSFT","SPY"]
+
+async function fetchStockData(symbol) {
+  try {
+    const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${STOCK_API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    // data.c = current price, data.dp = change percent
+    const arrow = data.dp >= 0 ? "▲" : "▼";
+    const changePercent = Math.abs(data.dp).toFixed(2);
+    return `${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%`;
+  } catch {
+    return `${symbol} N/A`;
+  }
+}
 
 async function loadTicker() {
-  // In the future, replace these placeholders with live API data
-  const weatherText = "Birmingham 72°F Clear"; 
-  const stockText = "AAPL 189.3 ▲1.2% | MSFT 402.1 ▼0.4% | SPY 478.2 ▲0.6%";
-  const sportsText = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM";
+  try {
+    // 1. Weather
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.LOCATION}&units=imperial&appid=${CONFIG.WEATHER_API_KEY}`;
+    const weatherRes = await fetch(weatherUrl);
+    const weatherData = await weatherRes.json();
+    const weatherText = `${CONFIG.LOCATION} ${Math.round(weatherData.main.temp)}°F ${weatherData.weather[0].main}`;
 
-  document.getElementById("ticker-content").textContent =
-    `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+    // 2. Stocks
+    const stockPromises = STOCK_SYMBOLS.map(fetchStockData);
+    const stockResults = await Promise.all(stockPromises);
+    const stockText = stockResults.join(" | ");
+
+    // 3. Sports (keep placeholders for now)
+    const sportsText = "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM";
+
+    // 4. Update ticker content
+    document.getElementById("ticker-content").textContent =
+      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+  } catch (error) {
+    console.error("Ticker update failed:", error);
+  }
 }
+
+// Initial load
+loadTicker();
+
+// Refresh every 1 minute
+setInterval(loadTicker, 60000);
 
 /* ---------------- INIT ---------------- */
 
