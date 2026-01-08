@@ -1,53 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Live Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticker Dashboard</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-  <!-- Clock -->
-  <div id="clock-panel">
-    <div id="time"></div>
-    <div id="date"></div>
-  </div>
+  <!-- HEADER -->
+  <header>
+    <div>
+      <div id="time"></div>
+      <div id="date"></div>
+    </div>
+  </header>
 
-  <!-- Dashboard Grid -->
-  <div class="dashboard-grid">
-    
-    <!-- Weather Panel -->
-    <div id="weather" class="panel">
+  <!-- MAIN GRID -->
+  <main class="dashboard">
+
+    <!-- WEATHER -->
+    <section class="panel" id="weather">
       <h2>Weather</h2>
-      <p id="weather-location">Loading...</p>
-      <p id="weather-temp" style="font-size:42px"></p>
-      <p id="weather-condition"></p>
-      <!-- Persistent canvas for weekly forecast -->
-      <canvas id="weeklyChart" width="400" height="150"></canvas>
-    </div>
+      <div id="weather-location"></div>
+      <div id="weather-temp"></div>
+      <div id="weather-condition"></div>
+    </section>
 
-    <!-- Stocks Panel -->
-    <div id="stocks" class="panel">
-      <h2>Stocks</h2>
-      <p>Loading...</p>
-    </div>
+    <!-- STOCKS -->
+    <section class="panel" id="stocks">
+      <h2>Markets</h2>
+      <div class="stock-row">Loading stocks…</div>
+    </section>
 
-    <!-- Sports Panel -->
-    <div id="sports" class="panel">
-      <h2>Live Auburn Sports</h2>
-      <p>Loading...</p>
-    </div>
+    <!-- SPORTS -->
+    <section class="panel" id="sports">
+      <h2>Auburn Sports</h2>
+      <p>Loading sports…</p>
+    </section>
 
+  </main>
+
+  <!-- TICKER -->
+  <div id="ticker">
+    <div id="ticker-content">Loading ticker…</div>
   </div>
 
-  <!-- Ticker -->
-  <div class="ticker">
-    <div id="ticker-content">Loading live ticker...</div>
-  </div>
-
-  <!-- Main JS -->
+  <!-- JAVASCRIPT -->
   <script src="app.js"></script>
+
 </body>
 </html>
