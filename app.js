@@ -4,7 +4,7 @@ const CONFIG = {
   LAT: 33.5186,
   LON: -86.8104,
   WEATHER_API_KEY: "ec17977d965fdd9d0ef4cc0d2963af17",
-  STOCKS: ["AAPL","SPY","NVDA", "TSLA"],
+  STOCKS: ["AAPL","MSFT","SPY"],
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
     FOOTBALL: "football/fbs",
@@ -13,6 +13,12 @@ const CONFIG = {
   }
 };
 const STOCK_API_KEY = "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g";
+
+/* ---------------- PLACEHOLDER PANELS ---------------- */
+document.getElementById("weather").innerHTML = "<h2>Weather</h2><p>Loading...</p>";
+document.getElementById("stocks").innerHTML = "<h2>Stocks</h2><p>Loading...</p>";
+document.getElementById("sports").innerHTML = "<h2>Live Auburn Sports</h2><p>Loading...</p>";
+document.getElementById("ticker-content").textContent = "Loading live ticker...";
 
 /* ---------------- CLOCK ---------------- */
 function updateClock() {
@@ -35,6 +41,7 @@ async function loadWeather() {
     const current = data.current;
     latestWeatherText = `${CONFIG.LOCATION} ${Math.round(current.temp)}°F ${current.weather[0].main}`;
 
+    // Render weather panel without waiting for other APIs
     document.getElementById("weather").innerHTML = `
       <h2>Weather</h2>
       <p>${CONFIG.LOCATION}</p>
@@ -43,7 +50,7 @@ async function loadWeather() {
       <canvas id="weeklyChart" width="400" height="150"></canvas>
     `;
 
-    // 7-day forecast
+    // 7-day forecast chart
     const labels = data.daily.map(d => {
       const date = new Date(d.dt * 1000);
       return date.toLocaleDateString([], { weekday: "short" });
@@ -63,15 +70,14 @@ async function loadWeather() {
       },
       options: { responsive: true, plugins: { legend: { position: "bottom" } } }
     });
-
   } catch (err) {
     console.error("Weather API failed:", err);
-    document.getElementById("weather").textContent = "Weather unavailable";
+    document.getElementById("weather").innerHTML = "<h2>Weather</h2><p>Unavailable</p>";
     latestWeatherText = `${CONFIG.LOCATION} Weather N/A`;
   }
 }
 loadWeather();
-setInterval(loadWeather, 120000);
+setInterval(loadWeather, 60000);
 
 /* ---------------- STOCKS ---------------- */
 async function fetchStockData(symbol) {
@@ -83,10 +89,14 @@ async function fetchStockData(symbol) {
     const arrow = up ? "▲" : "▼";
     const changePercent = Math.abs(data.dp).toFixed(2);
     return `<span class="${up ? "stock-up" : "stock-down"}">${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%</span>`;
-  } catch { return `${symbol} N/A`; }
+  } catch {
+    return `${symbol} N/A`;
+  }
 }
+
 async function loadStocks() {
   const results = await Promise.all(CONFIG.STOCKS.map(fetchStockData));
+  document.getElementById("stocks").innerHTML = "<h2>Stocks</h2><p>" + results.join(" | ") + "</p>";
   return results.join(" | ");
 }
 
@@ -97,7 +107,9 @@ async function fetchNcaaSchedule(sportPath) {
     const res = await fetch(`${CONFIG.SPORTS_API.BASE}/scoreboard/${sportPath}/${year}/all-conf`);
     const data = await res.json();
     return data.games || [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 function filterAuburnGames(games) {
@@ -181,5 +193,6 @@ async function updateTicker() {
   }
 }
 
+// Initial load & repeating updates
 updateTicker();
 setInterval(updateTicker, 120000);
