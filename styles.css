@@ -1,12 +1,21 @@
 /* ---------------- GENERAL ---------------- */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #000;  /* Black background */
-  color: #fff;             /* Default text white */
-  overflow-x: hidden;
-}
+<body>
+  <div id="clock-panel">
+    <div id="time"></div>
+    <div id="date"></div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div id="weather" class="panel"></div>
+    <div id="stocks" class="panel"></div>
+    <div id="sports" class="panel"></div>
+  </div>
+
+  <div class="ticker">
+    <div id="ticker-content"></div>
+  </div>
+</body>
+
 
 h2 {
   margin: 0 0 10px 0;
