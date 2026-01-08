@@ -80,7 +80,7 @@ function loadSportsPanel() {
 
 /* ---------------- STOCKS ---------------- */
 
-const STOCK_API_KEY = "YOUR_FINNHUB_KEY";
+const STOCK_API_KEY = "d5fj6jhr01qnjhocksh0d5fj6jhr01qnjhockshg";
 
 async function fetchStockData(symbol) {
   try {
