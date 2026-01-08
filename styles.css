@@ -65,6 +65,8 @@ body {
   transform: translateX(100%);
   /* Animation will be applied dynamically in JS */
 }
-
+.ticker:hover #ticker-content {
+  transition-play-state: paused;
+}
 
 
