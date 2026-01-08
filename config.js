@@ -39,7 +39,7 @@ const CONFIG = {
   STOCKS: {
     PROVIDER: "FINNHUB",
     API_KEY: "d5fk5a1r01qnjhocqd70d5fk5a1r01qnjhocqd7g",
-    SYMBOLS: ["AAPL", "MSFT", "SPY"]
+    SYMBOLS: ["SPY", "DOW", "AAPL", "TSLA", "NVDA"]
   },
 
   // -------- Sports (Auburn Only) --------
