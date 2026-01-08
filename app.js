@@ -67,9 +67,11 @@ async function fetchStockData(symbol) {
     const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${STOCK_API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
-    const arrow = data.dp >= 0 ? "▲" : "▼";
+    const up = data.dp >= 0;
+    const arrow = up ? "▲" : "▼";
     const changePercent = Math.abs(data.dp).toFixed(2);
-    return `${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%`;
+    const priceText = `${symbol} ${data.c.toFixed(2)} ${arrow}${changePercent}%`;
+    return `<span class="${up ? "stock-up" : "stock-down"}">${priceText}</span>`;
   } catch {
     return `${symbol} N/A`;
   }
@@ -179,8 +181,8 @@ async function updateTicker() {
     const stockText = await loadStocks();
     const sportsText = await loadAuburnSportsPanel();
 
-    document.getElementById("ticker-content").textContent =
-      `${weatherText}   |   ${stockText}   |   ${sportsText}`;
+    document.getElementById("ticker-content").innerHTML =
+  `${latestWeatherText}   |   ${stockText}   |   ${sportsText}`;
 
     startTicker();
   } catch (err) {
