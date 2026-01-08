@@ -50,33 +50,71 @@ function formatGameDate(dateString, timeString) {
   }) + " at " + timeString;
 }
 
-function loadSportsPanel() {
-  document.getElementById("sports").innerHTML = `
-    <h2>Sports Updates</h2>
+/* ---------------- LIVE SPORTS API ---------------- */
 
-    <div style="margin-bottom:16px">
-      <strong>Auburn Basketball</strong>
-      <div>
-        Next Game: ${formatGameDate("2026-03-12", "7:00 PM")} vs Kentucky
-      </div>
-    </div>
+async function fetchNcaaSchedule(sportPath) {
+  try {
+    // For today’s date
+    const now = new Date();
+    const year = now.getFullYear();
 
-    <div style="margin-bottom:16px">
-      <strong>Auburn Football</strong>
-      <div>
-        Next Game: ${formatGameDate("2026-11-29", "2:30 PM")} vs Alabama
-      </div>
-    </div>
+    const url = `${CONFIG.SPORTS_API.BASE}/scoreboard/${sportPath}/${year}/all-conf`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-    <div>
-      <strong>Auburn Baseball</strong>
-      <div>
-        Next Game: ${formatGameDate("2026-04-03", "6:00 PM")} vs LSU
-      </div>
-    </div>
-  `;
-  return "Auburn Basketball Wed 7:00 PM | Football Sat 2:30 PM | Baseball Fri 6:00 PM";
+    return data.games || [];
+  } catch (err) {
+    console.error("Sports API failed", err);
+    return [];
+  }
 }
+
+function formatNcaaGame(game) {
+  // Example game object from NCAA API
+  const home = game.home.names.short.toUpperCase();
+  const away = game.away.names.short.toUpperCase();
+  const status = game.status || "Scheduled";
+  const gameTime = game.time || "";
+  const score = game.home.score + "-" + game.away.score;
+
+  return `${away} @ ${home} ${status} ${score} ${gameTime}`;
+}
+
+async function loadSportsPanel() {
+  const footballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.FOOTBALL);
+  const basketballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASKETBALL);
+
+  let html = `<h2>Sports Updates</h2>`;
+
+  if (footballGames.length) {
+    html += `<div><strong>Football</strong>`;
+    footballGames.forEach(g => {
+      html += `<div>${formatNcaaGame(g)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (basketballGames.length) {
+    html += `<div><strong>Basketball</strong>`;
+    basketballGames.forEach(g => {
+      html += `<div>${formatNcaaGame(g)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById("sports").innerHTML = html;
+
+  // For ticker, use simple next games text
+  const nextFootball = footballGames[0]
+    ? formatNcaaGame(footballGames[0])
+    : "No football today";
+  const nextBasketball = basketballGames[0]
+    ? formatNcaaGame(basketballGames[0])
+    : "No basketball today";
+
+  return `${nextFootball} | ${nextBasketball}`;
+}
+
 
 /* ---------------- STOCKS ---------------- */
 
