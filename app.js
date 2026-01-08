@@ -118,9 +118,11 @@ function formatAuburnGame(game) {
 async function loadAuburnSportsPanel() {
   const footballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.FOOTBALL);
   const basketballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASKETBALL);
+  const baseballGames = await fetchNcaaSchedule(CONFIG.SPORTS_API.BASEBALL);
 
   const auburnFootball = filterAuburnGames(footballGames);
   const auburnBasketball = filterAuburnGames(basketballGames);
+  const auburnBaseball = filterAuburnGames(baseballGames);
 
   let html = `<h2>Live Auburn Sports</h2>`;
 
@@ -136,12 +138,19 @@ async function loadAuburnSportsPanel() {
     html += `</div>`;
   } else html += `<div><strong>Basketball</strong><div>No games today</div></div>`;
 
+  if (auburnBaseball.length) {
+    html += `<div><strong>Baseball</strong>`;
+    auburnBaseball.forEach(g => { html += `<div>${formatAuburnGame(g)}</div>`; });
+    html += `</div>`;
+  } else html += `<div><strong>Baseball</strong><div>No games today</div></div>`;
+
   document.getElementById("sports").innerHTML = html;
 
   const nextFootball = auburnFootball[0] ? formatAuburnGame(auburnFootball[0]) : "No football today";
   const nextBasketball = auburnBasketball[0] ? formatAuburnGame(auburnBasketball[0]) : "No basketball today";
+  const nextBaseball = auburnBaseball[0] ? formatAuburnGame(auburnBaseball[0]) : "No baseball today";
 
-  return `${nextFootball} | ${nextBasketball}`;
+  return `${nextFootball} | ${nextBasketball}| ${nextBaseball}`;
 }
 
 /* ---------------- DYNAMIC TICKER ---------------- */
