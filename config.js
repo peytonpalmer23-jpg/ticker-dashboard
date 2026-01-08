@@ -9,7 +9,8 @@ const CONFIG = {
   SPORTS_API: {
     BASE: "https://ncaa-api.henrygd.me/openapi",
     FOOTBALL: "football/fbs",
-    BASKETBALL: "basketball-men/d1"
+    BASKETBALL: "basketball-men/d1",
+    BASEBALL: "baseball/d1"
   }
 };
 
