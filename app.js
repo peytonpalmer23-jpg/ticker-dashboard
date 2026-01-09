@@ -66,9 +66,13 @@ async function fetchStock(symbol) {
 }
 
 async function loadStocks() {
-  const stocks = await Promise.all(CONFIG.STOCKS.map(fetchStock));
+  const stocks = await Promise.all(
+    CONFIG.STOCKS.SYMBOLS.map(fetchStock)
+  );
+
   document.getElementById("stocks").innerHTML =
     `<h2>Markets</h2><div class="stock-row">${stocks.join(" | ")}</div>`;
+
   return stocks.join(" | ");
 }
 
