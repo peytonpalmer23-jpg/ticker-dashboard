@@ -27,18 +27,18 @@ let latestWeatherText = "Loading weather...";
 
 async function loadWeather() {
   try {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${CONFIG.LAT}&lon=${CONFIG.LON}&units=imperial&appid=${CONFIG.WEATHER_API_KEY}`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${CONFIG.LOCATION.LAT}&lon=${CONFIG.LOCATION.LON}&units=${CONFIG.WEATHER.UNITS}&appid=${CONFIG.WEATHER.API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
 
     const temp = Math.round(data.main.temp);
     const condition = data.weather[0].main;
 
-    document.getElementById("weather-location").textContent = CONFIG.LOCATION;
+    document.getElementById("weather-location").textContent = CONFIG.LOCATION.NAME;
     document.getElementById("weather-temp").textContent = `${temp}°F`;
     document.getElementById("weather-condition").textContent = condition;
 
-    latestWeatherText = `${CONFIG.LOCATION} ${temp}°F ${condition}`;
+    latestWeatherText = `${CONFIG.LOCATION.NAME} ${temp}°F ${condition}`;
   } catch (err) {
     console.error("Weather failed:", err);
     latestWeatherText = "Weather unavailable";
